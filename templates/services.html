@@ -1,0 +1,151 @@
+{% with title="وكالة عمار مبارك - خدمات الوكالة" %}
+{% include "header.html" %}
+{% endwith %}
+
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>خدمات الوكالة</h2>
+                <ol>
+                    <li><a href="{{ url_for('home') }}">الصفحة الرئيسة</a></li>
+                    <li>خدمات الوكالة</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Service Details Section ======= -->
+    <section class="services-details" id="services-details" style="padding-top: 20px">
+        <div class="container">
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="services-details-slider swiper">
+                <div class="swiper-wrapper align-items-center">
+                    {% for img_url in service["Images URLs"]: %}
+                        <div class="swiper-slide">
+                            <img alt="" src="{{ img_url }}">
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <div class="column-title-container mt-3 text-center">
+                <div class="services-description services-description-title">
+                    <div class="column-text w-100">
+                        <h2>{{ service["Title"] }}</h2>
+                        <span><em>{{ service["Subtitle"] }}</em></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column-container mt-3">
+                <div class="services-description">
+                    <div class="column-text" style="padding-top: 0;">
+                        <div class="main-text">
+                            {% for description_piece in service["Description"]: %}
+                                {% if service["Description"][description_piece] is string %}
+                                    <p>
+                                        <i class="bi bi-chevron-left"></i>
+                                        {{ service["Description"][description_piece] }}
+                                    </p>
+                                {% elif service["Description"][description_piece] is iterable %}
+                                    <ul style="list-style-type: circle;">
+                                        {% for list_item in service["Description"][description_piece] %}
+                                            <li>{{ list_item }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- End Service Details Section -->
+
+    <!-- ======= Contact Section ======= -->
+    <section class="contact" id="contact" style="padding-top: 0; padding-bottom: 60px;">
+        <div class="container">
+            <div class="col-lg-9 mt-5 d-flex align-items-stretch" style="margin-left: auto; margin-right: auto;">
+                <form action="{{ url_for('services', service_id=service_id) }}#contact" class="flask-WTForm" method="POST" novalidate>
+                    {{ contact_form.hidden_tag() }}
+
+                    {% if sent_successfully %}
+                    <span id="success-message"
+                          style="color: #28a745; padding: 20px 10px; border-radius: 5px; margin-bottom: 10px;">
+                            {{ sent_successfully }}
+                        </span>
+
+                    <script>
+                          // Get the success message element
+                          var successMessage = document.getElementById("success-message");
+
+                          // Remove the success message when the page is refreshed
+                          window.addEventListener("beforeunload", function() {
+                            successMessage.remove();
+                          });
+
+                    </script>
+                    {% endif %}
+                    <script>
+                      // Clear the URL hash after loading the page
+                      window.addEventListener('load', function() {
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                      });
+
+                    </script>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="name">الاسم:</label>
+                            {{ contact_form.name(class="form-control form-input", placeholder="الاسم") }}
+                            {% for error in contact_form.name.errors %}
+                            <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="phone_number">رقم الهاتف:</label>
+                            {{ contact_form.phone_number(class="form-control form-input", placeholder="رقم الهاتف")
+                            }}
+                            {% for error in contact_form.phone_number.errors %}
+                            <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني:</label>
+                        {{ contact_form.email(class="form-control form-input", placeholder="البريد الإلكتروني") }}
+                        {% for error in contact_form.email.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="message">الرسالة:</label>
+                        {{ contact_form.message(class="form-control form-textarea", placeholder="الرسالة") }}
+                        {% for error in contact_form.message.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center">
+                        {{ contact_form.submit(class="btn btn-primary send_button") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section><!-- End Contact Section -->
+
+</main><!-- End #main -->
+
+{% include "footer.html" %}
